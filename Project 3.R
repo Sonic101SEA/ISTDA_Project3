@@ -2,6 +2,8 @@
 library(here)
 library(dplyr)
 library(survival)
+library(survminer)
+library(ggplot2)
 #### Data ----
 
 # Breast cancer data from Metabric
@@ -15,7 +17,7 @@ metabric <- readRDS(here::here("data", "metabric-analytical.rds"))
 # Setting living as 1, dead as 0 for vital_status
 metabric <-
   metabric %>%
-  mutate(vital_status_level = ifelse(vital_status == "living", 1, 0))
+  mutate(vital_status_level = ifelse(vital_status == "living", 0, 1))
 
 # Factorising grade
 metabric <-
@@ -34,7 +36,8 @@ metabric <-
     
 
 #### Analysis of survival----
-
+km <- survfit(Surv(surv_months, vital_status_level,) ~ 1, metabric)
+ggsurvplot(km, title = "Survival probability over time in months", xlab = "Time in months")
 
 #### Analysis of Logrank----
 # Selecting variables for log rank
