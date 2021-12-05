@@ -18,6 +18,7 @@ metabric <- readRDS(here::here("data", "metabric-analytical.rds"))
 metabric <-
   metabric %>%
   mutate(vital_status_level = ifelse(vital_status == "living", 0, 1))
+  # Note: There is one missing value in vital_status
 
 # Factorising grade
 metabric <-
