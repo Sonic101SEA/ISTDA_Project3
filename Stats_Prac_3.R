@@ -3,7 +3,8 @@ setwd(path)
 library(tidyverse)
 library(survival)
 library(survminer)
-metabric <- readRDS("metabric-analytical.rds")
+library(ggplot2)
+metabric <- readRDS(here::here("data", "metabric-analytical.rds"))
 head(metabric)
 View(metabric)
 
@@ -26,12 +27,16 @@ summary(km_fit_0, times = c(60))
 km_fit_0
 
 ## plot KM
-ggsurvplot(km_fit_0, 
-           title = "Kaplan-Meier", 
+km_fit_0_plot <- 
+  ggsurvplot(km_fit_0, 
+           title = "Kaplan-Meier plot for overall survivability", 
            xlab = "Time in months",
+           ylab = "Overall survival probability",
            size = 0.3, 
-           censor.size = 0.1
+           censor.size = 0.1,
+           surv.median.line = "hv",
            )
+km_fit_0_plot$plot + geom_vline(xintercept = 60)
 
 ## plot KM by molecular status
 
