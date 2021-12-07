@@ -14,10 +14,9 @@ metabric <- readRDS(here::here("data", "metabric-analytical.rds"))
 
 
 #### Pre-processing----
-# Setting living as 1, dead as 0 for vital_status
-metabric <-
-  metabric %>%
-  mutate(vital_status_level = ifelse(vital_status == "living", 0, 1))
+# Setting died of disease as 1, rest as 0 for vital_status
+metabric <- metabric %>% 
+  mutate(death = ifelse(vital_status == 'died of disease', 1, 0))
   # Note: There is one missing value in vital_status
 
 # Factorising grade
@@ -37,8 +36,24 @@ metabric <-
     
 
 #### Analysis of survival----
-km <- survfit(Surv(surv_months, vital_status_level,) ~ 1, metabric)
-ggsurvplot(km, title = "Survival probability over time in months", xlab = "Time in months")
+# Base model
+km_fit_0 <- survfit(Surv(surv_months, death) ~ 1, data = metabric)
+## survival prob at 60 months
+summary(km_fit_0, times = c(60))
+## get median
+km_fit_0
+
+## plot KM
+km_fit_0_plot <- 
+  ggsurvplot(km_fit_0, 
+             title = "Kaplan-Meier plot for overall survivability", 
+             xlab = "Time in months",
+             ylab = "Overall survival probability",
+             size = 0.3, 
+             censor.size = 0.1,
+             surv.median.line = "hv",
+  )
+km_fit_0_plot$plot + geom_segment(aes(x=60,xend=60, y=0, yend=0.822)) + geom_segment(aes(x=0, xend=60, y=0.822, yend=0.822))
 
 #### Analysis of Logrank----
 # Selecting variables for log rank
