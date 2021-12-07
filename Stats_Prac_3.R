@@ -36,7 +36,7 @@ km_fit_0_plot <-
            censor.size = 0.1,
            surv.median.line = "hv",
            )
-km_fit_0_plot$plot + geom_vline(xintercept = 60)
+km_fit_0_plot$plot + geom_segment(aes(x=60,xend=60, y=0, yend=0.822)) + geom_segment(aes(x=0, xend=60, y=0.822, yend=0.822))
 
 ## plot KM by molecular status
 
