@@ -55,8 +55,7 @@ barplot_receptors <- long_table_receptors %>%
   ggplot(aes(variable, n, fill = value)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(title = "Distribution of positive and negative receptor status", 
-       x = "Receptor Status", y = "Count", fill = "Status") +
-  geom_text(stat = "identity", aes(label=n), position = "fill")
+       x = "Receptor Status", y = "Count", fill = "Status")
 
 # Without using group_by and summarise
 long_table_receptors2 <-
@@ -72,8 +71,7 @@ barplot_receptors2 <- long_table_receptors2 %>%
   ggplot(aes(variable, fill = value)) +
   geom_bar(stat = "count") +
   labs(title = "Distribution of positive and negative receptor status", 
-       x = "Receptor Status", y = "Count", fill = "Status") +
-  geom_text(stat = "count", aes(label=..count..), vjust=-1)
+       x = "Receptor Status", y = "Count", fill = "Status")
 
 # Individual bar plots for receptors
 barplot_er <- metabric %>%
@@ -105,8 +103,7 @@ barplot_treatment <- long_table_treatment %>%
   ggplot(aes(variable, n, fill = value)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(title = "Distribution of treatment status", 
-       x = "Treatment Status", y = "Count", fill = "Status") +
-  geom_text(stat = "identity", aes(label=n), position = "fill")
+       x = "Treatment Status", y = "Count", fill = "Status")
 
 # Base model
 km_fit_0 <- survfit(Surv(surv_months, death) ~ 1, data = metabric)
