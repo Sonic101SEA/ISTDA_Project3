@@ -38,7 +38,8 @@ metabric <-
 
 #### Analysis of survival----
 
-# Descriptive analysis of variables
+## Descriptive analysis of variables
+# For receptors
 long_table_receptors <-
   metabric %>%
   pivot_longer(cols = c(er_status, her2_status, pr_status),
@@ -74,6 +75,7 @@ barplot_receptors2 <- long_table_receptors2 %>%
        x = "Receptor Status", y = "Count", fill = "Status") +
   geom_text(stat = "count", aes(label=..count..), vjust=-1)
 
+# Individual bar plots for receptors
 barplot_er <- metabric %>%
   ggplot(aes(x = er_status)) +
   geom_bar() +
@@ -86,6 +88,25 @@ barplot_her2 <- metabric %>%
 barplot_pr <- metabric %>%
   ggplot(aes(x = pr_status)) +
   geom_bar()
+
+## For treatment
+long_table_treatment <-
+  metabric %>%
+  pivot_longer(cols = c(chemotherapy, hormone_therapy, radio_therapy),
+               names_to = "variable",
+               values_to = "value") %>%
+  group_by(variable, value) %>%
+  summarise(n = n()) %>%
+  mutate(value = factor(
+    value,
+    levels = c("no", "yes")))
+
+barplot_treatment <- long_table_treatment %>%
+  ggplot(aes(variable, n, fill = value)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Distribution of treatment status", 
+       x = "Treatment Status", y = "Count", fill = "Status") +
+  geom_text(stat = "identity", aes(label=n), position = "fill")
 
 # Base model
 km_fit_0 <- survfit(Surv(surv_months, death) ~ 1, data = metabric)
