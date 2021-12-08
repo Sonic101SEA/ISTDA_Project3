@@ -1,6 +1,7 @@
 #### Libraries ----
 library(here)
 library(dplyr)
+library(tidyverse)
 library(survival)
 library(survminer)
 library(ggplot2)
@@ -36,6 +37,56 @@ metabric <-
     
 
 #### Analysis of survival----
+
+# Descriptive analysis of variables
+long_table_receptors <-
+  metabric %>%
+  pivot_longer(cols = c(er_status, her2_status, pr_status),
+               names_to = "variable",
+               values_to = "value") %>%
+  group_by(variable, value) %>%
+  summarise(n = n()) %>%
+  mutate(value = factor(
+    value,
+    levels = c("negative", "positive")))
+
+barplot_receptors <- long_table_receptors %>%
+  ggplot(aes(variable, n, fill = value)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Distribution of positive and negative receptor status", 
+       x = "Receptor Status", y = "Count", fill = "Status") +
+  geom_text(stat = "identity", aes(label=n), position = "fill")
+
+# Without using group_by and summarise
+long_table_receptors2 <-
+  metabric %>%
+  pivot_longer(cols = c(er_status, her2_status, pr_status),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(value = factor(
+    value,
+    levels = c("negative", "positive")))
+
+barplot_receptors2 <- long_table_receptors2 %>%
+  ggplot(aes(variable, fill = value)) +
+  geom_bar(stat = "count") +
+  labs(title = "Distribution of positive and negative receptor status", 
+       x = "Receptor Status", y = "Count", fill = "Status") +
+  geom_text(stat = "count", aes(label=..count..), vjust=-1)
+
+barplot_er <- metabric %>%
+  ggplot(aes(x = er_status)) +
+  geom_bar() +
+  geom_text(stat = "count", aes(label=..count..), vjust=-1)
+
+barplot_her2 <- metabric %>%
+  ggplot(aes(x = her2_status)) +
+  geom_bar()
+
+barplot_pr <- metabric %>%
+  ggplot(aes(x = pr_status)) +
+  geom_bar()
+
 # Base model
 km_fit_0 <- survfit(Surv(surv_months, death) ~ 1, data = metabric)
 ## survival prob at 60 months
@@ -53,7 +104,11 @@ km_fit_0_plot <-
              censor.size = 0.1,
              surv.median.line = "hv",
   )
-km_fit_0_plot$plot + geom_segment(aes(x=60,xend=60, y=0, yend=0.822)) + geom_segment(aes(x=0, xend=60, y=0.822, yend=0.822))
+km_fit_0_plot$plot + 
+  geom_segment(aes(x=60,xend=60, y=0, yend=0.822), colour = "grey60", linetype = "dotted") + 
+  geom_segment(aes(x=0, xend=60, y=0.822, yend=0.822), colour = "grey60", linetype = "dotted") +
+  annotate("text", x = 200, y = 0.822, label = "5-year survival probability = 0.822") +
+  annotate("text", x = 320, y = 0.60, label = "Median survival = 283 months")
 
 #### Analysis of Logrank----
 # Selecting variables for log rank
