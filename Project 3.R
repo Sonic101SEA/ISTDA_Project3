@@ -1,5 +1,4 @@
 #### Libraries ----
-library(here)
 library(dplyr)
 library(tidyverse)
 library(survival)
@@ -87,7 +86,7 @@ barplot_pr <- metabric %>%
   ggplot(aes(x = pr_status)) +
   geom_bar()
 
-## For treatment
+# Individual barplot for treatment
 long_table_treatment <-
   metabric %>%
   pivot_longer(cols = c(chemotherapy, hormone_therapy, radio_therapy),
@@ -104,6 +103,25 @@ barplot_treatment <- long_table_treatment %>%
   geom_bar(stat = "identity", position = "dodge") +
   labs(title = "Distribution of treatment status", 
        x = "Treatment Status", y = "Count", fill = "Status")
+
+# Barplot of vital_status
+long_table_vital <-
+  metabric %>%
+  pivot_longer(cols = c(vital_status),
+               names_to = "variable",
+               values_to = "value") %>%
+  group_by(variable, value) %>%
+  summarise(n = n()) %>%
+  mutate(value = factor(
+    value))
+
+barplot_vital <- long_table_vital %>%
+  ggplot(aes(value, n, fill = n, label = n)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Distribution of Vital status", 
+       x = "Vital Status", y = "Count", fill = "Status") +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  theme(legend.position = "none")
 
 # Base model
 km_fit_0 <- survfit(Surv(surv_months, death) ~ 1, data = metabric)
