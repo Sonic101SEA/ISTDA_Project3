@@ -123,6 +123,23 @@ barplot_vital <- long_table_vital %>%
   geom_text(size = 3, position = position_stack(vjust = 0.5)) +
   theme(legend.position = "none")
 
+# Boxplot for age_diagnosis
+metabric %>%
+  ggplot(aes(x = age_diagnosis)) + 
+  geom_boxplot(width = 0.2) +
+  labs(title = "Distribution of Age at diagnosis",
+       x = "Age in months") +
+  coord_flip()
+
+# Boxplot for surv_months
+metabric %>%
+  ggplot(aes(x = surv_months, y = "Survival")) + 
+  geom_boxplot(width = 0.2) +
+  labs(title = "Distribution of survival months",
+       x = "Survival in months") +
+  theme(axis.title.x = element_blank()) +
+  coord_flip()
+
 # Base model
 km_fit_0 <- survfit(Surv(surv_months, death) ~ 1, data = metabric)
 ## survival prob at 60 months
