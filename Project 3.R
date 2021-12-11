@@ -125,10 +125,11 @@ barplot_vital <- long_table_vital %>%
 
 # Boxplot for age_diagnosis
 metabric %>%
-  ggplot(aes(x = age_diagnosis)) + 
+  ggplot(aes(x = age_diagnosis, y = "Age at diagnosis")) + 
   geom_boxplot(width = 0.2) +
   labs(title = "Distribution of Age at diagnosis",
        x = "Age in months") +
+  theme(axis.title.x = element_blank()) +
   coord_flip()
 
 # Boxplot for surv_months
